@@ -1,11 +1,5 @@
 project_name: umlcoder
 
-release:
-  github:
-    owner: candy12t
-    name: umlcoder
-  prerelease: auto
-
 before:
   hooks:
     - go mod tidy
