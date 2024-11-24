@@ -4,21 +4,34 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"runtime/debug"
 
 	"github.com/candy12t/go-plantuml"
 	"github.com/urfave/cli/v2"
 )
 
 const (
-	version = "0.0.1"
-	name    = "umlcoder"
+	name = "umlcoder"
 )
+
+var version string
+
+func Version() string {
+	if version != "" {
+		return version
+	}
+
+	if buildInfo, ok := debug.ReadBuildInfo(); ok {
+		return buildInfo.Main.Version
+	}
+	return "dev"
+}
 
 func main() {
 	app := &cli.App{
 		Name:      name,
 		Usage:     "Command Line Tool to encode/decode PlantUML",
-		Version:   version,
+		Version:   Version(),
 		Reader:    os.Stdin,
 		Writer:    os.Stdout,
 		ErrWriter: os.Stderr,

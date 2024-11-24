@@ -1,0 +1,31 @@
+project_name: umlcoder
+
+release:
+  github:
+    owner: candy12t
+    name: umlcoder
+  prerelease: auto
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - main: ./cmd/umlcoder
+    binary: umlcoder
+    ldflags:
+      - -s -w -X main.version={{.Version}}
+    goos:
+      - darwin
+      - linux
+      - windows
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - format: tar.gz
+    wrap_in_directory: true
+    format_overrides:
+      - goos: windows
+        format: zip
