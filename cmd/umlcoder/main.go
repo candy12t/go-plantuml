@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"net/url"
 	"os"
@@ -114,15 +115,15 @@ func encode(ctx *cli.Context) error {
 	}
 
 	for _, file := range ctx.Args().Slice() {
-		text, err := os.ReadFile(file)
+		f, err := os.Open(file)
 		if err != nil {
 			return err
 		}
-		result, err := plantuml.Encode(text)
-		if err != nil {
+		var buffer bytes.Buffer
+		if err := plantuml.Encode(&buffer, f); err != nil {
 			return err
 		}
-		u, err := url.JoinPath(baseURL, format.String(), result)
+		u, err := url.JoinPath(baseURL, format.String(), buffer.String())
 		if err != nil {
 			return err
 		}
@@ -137,11 +138,9 @@ func decode(ctx *cli.Context) error {
 	}
 
 	for _, str := range ctx.Args().Slice() {
-		result, err := plantuml.Decode(str)
-		if err != nil {
+		if err := plantuml.Decode(ctx.App.Writer, bytes.NewBufferString(str)); err != nil {
 			return err
 		}
-		fmt.Fprintln(ctx.App.Writer, string(result))
 	}
 	return nil
 }
